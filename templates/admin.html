@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>admin</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        var root_url = 'http://127.0.0.1:8000';
+        function user_list(){
+            $.ajax({
+                type:'GET',
+                contentType: 'application/json',
+                url: root_url + '/get_users',
+                dataType: 'json',
+                success: function(data, text_status, jq){
+                    var all_users = data.users;
+                    var output = '<form>' + '\n';
+                    for (var i = 0; i < all_users.length; i++){
+                        var flag = 'add';
+                        if (all_users[i].blacklist == 'Y'){
+                            flag = 'Delete'
+                        }
+                        output += all_users[i].user + '&nbsp;' + "<input type='button' class='type'" +
+                                        "id=" + "'" + all_users[i].user + "'" + "value=" + flag + "/>"
+                    }
+                    output += '</form>';
+                    document.getElementById("blacklist_users").innerHTML = output;
+                    $(function(){
+                      $(".type")
+                              .on('click', function(){
+                                  var name = $(this).attr('id');
+                                  var action = $(this).attr('value');
+                                  send_request(name, action)
+                      })
+                    })
+                }
+            });
+
+        }
+    </script>
+</head>
+<body onload="user_list">
+    <div id="blacklist_users">
+
+    </div>
+</body>
+</html>
