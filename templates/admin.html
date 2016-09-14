@@ -18,15 +18,15 @@
                     for (var i = 0; i < all_users.length; i++){
                         var flag = 'add';
                         if (all_users[i].blacklist == 'Y'){
-                            flag = 'Delete'
+                            flag = 'delete'
                         }
-                        output += all_users[i].user + '&nbsp;' + "<input type='button' class='type'" +
-                                        "id=" + "'" + all_users[i].user + "'" + "value=" + flag + "/>"
+                        output += all_users[i].user + '&nbsp;' + "<input type='button' class='one_user'" +
+                                        "id=" + "'" + all_users[i].user + "'" + "value=" + flag + " />" + "<br>"
                     }
                     output += '</form>';
-                    document.getElementById("blacklist_users").innerHTML = output;
+                    document.getElementById("all_users").innerHTML = output;
                     $(function(){
-                      $(".type")
+                      $(".one_user")
                               .on('click', function(){
                                   var name = $(this).attr('id');
                                   var action = $(this).attr('value');
@@ -37,10 +37,36 @@
             });
 
         }
+
+        function send_request(name, action) {
+            if(action == 'add'){
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    url: root_url + '/add_user',
+                    data: JSON.stringify({
+                        'user': name
+                    }),
+                    success: function(data, text_status, jq){
+                        user_list()
+                    }
+                })
+            }
+            if(action == 'delete'){
+                $.ajax({
+                    type: 'DELETE',
+                    contentType: 'application/json',
+                    url: root_url + '/delete_user/' + name,
+                    success: function(data, text_status, jq){
+                        user_list()
+                    }
+                })
+            }
+        }
     </script>
 </head>
-<body onload="user_list">
-    <div id="blacklist_users">
+<body onload="user_list()">
+    <div id="all_users">
 
     </div>
 </body>
